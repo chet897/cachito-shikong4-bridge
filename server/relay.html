@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>失控 4.0</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'SF Pro Text',sans-serif;background:linear-gradient(160deg,#2d1b4e 0%,#1a1035 30%,#1e0d3d 60%,#2a1245 100%);color:#fce7f3;padding:20px 16px;max-width:420px;margin:0 auto;min-height:100vh}
+h2{text-align:center;margin-bottom:20px;font-size:22px;background:linear-gradient(135deg,#f9a8d4,#d8b4fe,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px}
+.card{background:rgba(255,200,230,0.06);backdrop-filter:blur(24px);border:1px solid rgba(255,150,200,0.15);box-shadow:0 4px 24px rgba(200,100,180,0.08);border-radius:16px;padding:16px;margin-bottom:14px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;box-shadow:0 0 6px currentColor}
+.red{color:#ff6b6b;background:#ff6b6b}.green{color:#34d399;background:#34d399}
+.label{font-size:12px;color:rgba(240,230,255,0.45);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
+.value{font-size:15px;font-weight:500}
+button{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;transition:all 0.2s;letter-spacing:0.3px}
+button:active{transform:scale(0.97);opacity:0.85}
+.bs{background:linear-gradient(135deg,#f472b6,#fb7185);color:#fff;box-shadow:0 4px 20px rgba(244,114,182,0.25)}
+.st{font-size:13px;font-weight:600;margin-bottom:10px;color:#f0abfc;display:flex;align-items:center;gap:6px}
+.st .cur{font-size:11px;color:#f9a8d4;margin-left:auto}
+.sub{font-size:11px;color:rgba(240,230,255,0.35);margin-bottom:5px}
+.g{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.g button{width:auto;flex:1;min-width:34px;padding:9px 4px;font-size:12px;font-weight:500;background:rgba(255,255,255,0.06);color:rgba(240,230,255,0.7);border:1px solid rgba(255,255,255,0.08);border-radius:10px;margin-bottom:0}
+.g button:active{background:rgba(240,171,252,0.2);border-color:rgba(240,171,252,0.4)}
+.g button.on{background:rgba(240,171,252,0.2);border-color:rgba(240,171,252,0.5);color:#f0abfc}
+input[type=range]{width:100%;margin:2px 0 8px;accent-color:#f0abfc}
+.pr{display:flex;align-items:center;gap:5px;margin-bottom:7px}
+.pn{flex:0 0 62px;font-size:12px;color:#f9a8d4;font-weight:600}
+.pr button{width:auto;flex:1;padding:8px 4px;font-size:11px;font-weight:500;background:rgba(255,255,255,0.06);color:rgba(240,230,255,0.7);border:1px solid rgba(255,255,255,0.08);border-radius:10px;margin-bottom:0}
+.pr button.on{background:rgba(240,171,252,0.2);border-color:rgba(240,171,252,0.5);color:#f0abfc}
+.err{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:10px;padding:10px 12px;margin-top:8px;font-size:11px;display:none;color:#fca5a5;line-height:1.4}
+.err.show{display:block}
+.log{font-family:'SF Mono',monospace;font-size:10px;color:rgba(240,230,255,0.35);max-height:160px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;margin-top:8px;line-height:1.5}
+.lc{font-size:14px;color:#f9a8d4;font-weight:500}
+</style>
+</head>
+<body>
+<h2>🜂 失控 4.0</h2>
+
+<div class="card">
+<div class="label">手机 App</div>
+<div class="value"><span id="pd" class="dot red"></span><span id="pst">未连接</span></div>
+<div style="margin-top:8px"><div class="label">当前</div><div id="lc" class="lc">待机</div></div>
+<div id="errAuth" class="err">[E01] 口令不对或没带口令。用 <b>?token=你的口令</b> 打开本页。</div>
+<div id="errNet" class="err">[E02] 连不上中转服务，检查网络 / VPS 上 shikong-relay 是否在跑。</div>
+<div id="errPhone" class="err">[E03] 手机 App 没连上，指令发出去也播不出来。打开 App、确认后台常驻。</div>
+</div>
+
+<button class="bs" id="sb">全停</button>
+
+<div class="card">
+<div class="st">🌸 吮吸端 <span class="cur" id="suckCur">0</span></div>
+<input type="range" id="suckRange" min="0" max="100" step="1" value="0">
+<div class="sub">快捷档位</div>
+<div class="g" id="suckG"></div>
+</div>
+
+<div class="card">
+<div class="st">💫 入体端 <span class="cur" id="invibCur">0</span></div>
+<input type="range" id="invibRange" min="0" max="100" step="1" value="0">
+<div class="sub">快捷档位</div>
+<div class="g" id="invibG"></div>
+</div>
+
+<div class="card">
+<div class="st">🎐 模式</div>
+<div class="sub">每行三个按钮：只套吮吸端 / 只套入体端 / 两端一起</div>
+<div id="pl"></div>
+<div class="g" style="margin-top:4px">
+<button id="psAll">停所有模式（档位保持）</button>
+</div>
+</div>
+
+<div class="card" style="border-color:rgba(255,255,255,0.05)">
+<div class="label">日志</div>
+<div class="log" id="lg"></div>
+</div>
+
+<script>
+var BASE = location.pathname.replace(/\/+$/, '');
+var LEVELS = [0,10,20,30,40,50,60,70,80,90,100];
+var TK = '';
+var ST = {suck:{level:0,pattern:null}, invib:{level:0,pattern:null}, phone_online:false, seq:0};
+var PATS = [];
+var busy = 0;
+
+/* --- 口令：URL ?token= 优先，存 localStorage --- */
+(function(){
+  var q = new URLSearchParams(location.search).get('token');
+  try{
+    if(q){ TK = q.trim(); localStorage.setItem('shikong_token', TK); }
+    else { TK = localStorage.getItem('shikong_token') || ''; }
+  }catch(e){ TK = q ? q.trim() : ''; }
+  if(!TK){ se('errAuth', true); }
+})();
+
+function se(id,s){var e=document.getElementById(id);if(e)e.className='err'+(s?' show':'')}
+function lg(m){var el=document.getElementById('lg');var t=new Date().toLocaleTimeString('zh-CN',{hour12:false});el.textContent=t+' '+m+'\n'+el.textContent;var l=el.textContent.split('\n');if(l.length>60)el.textContent=l.slice(0,60).join('\n')}
+
+async function api(path, method, body){
+  var url = BASE + path;
+  var opt = {method: method||'GET', headers:{'Authorization':'Bearer '+TK}};
+  if(body){ opt.headers['Content-Type']='application/json'; opt.body = JSON.stringify(body); }
+  var r = await fetch(url, opt);
+  if(r.status === 401){ se('errAuth', true); throw new Error('401 口令不对'); }
+  se('errAuth', false);
+  if(!r.ok){ throw new Error('HTTP '+r.status); }
+  return await r.json();
+}
+
+/* --- 按钮 --- */
+(function(){
+  [['suck','suckG'],['invib','invibG']].forEach(function(pair){
+    var ch=pair[0], box=document.getElementById(pair[1]);
+    LEVELS.forEach(function(v){
+      var b=document.createElement('button');
+      b.textContent = (v===0?'停':v);
+      b.dataset.v = v;
+      b.onclick = function(){ setLevel(ch, v); };
+      box.appendChild(b);
+    });
+  });
+  ['suck','invib'].forEach(function(ch){
+    var r=document.getElementById(ch+'Range');
+    r.addEventListener('input', function(){ document.getElementById(ch+'Cur').textContent = r.value; });
+    r.addEventListener('change', function(){ setLevel(ch, parseInt(r.value,10)); });
+  });
+})();
+
+document.getElementById('sb').addEventListener('click', async function(){
+  try{ await api('/api/stop','POST',{}); lg('⏹ 全停'); await refresh(); }
+  catch(e){ lg('[E] 全停失败 '+e.message); }
+});
+document.getElementById('psAll').addEventListener('click', async function(){
+  try{ await api('/api/pattern/stop','POST',{part:'both'}); lg('⏹ 停模式'); await refresh(); }
+  catch(e){ lg('[E] 停模式失败 '+e.message); }
+});
+
+async function setLevel(ch, v){
+  var body={}; body[ch]=v;
+  busy = Date.now();
+  try{ await api('/api/set','POST',body); lg('▸ '+(ch==='suck'?'吮吸':'入体')+' '+v); await refresh(); }
+  catch(e){ lg('[E] 设档失败 '+e.message); }
+}
+async function runPattern(name, part){
+  try{ await api('/api/pattern','POST',{name:name, part:part}); lg('▸ 模式 '+name+' → '+part); await refresh(); }
+  catch(e){ lg('[E] 模式失败 '+e.message); }
+}
+
+/* --- 模式列表 --- */
+async function loadPatterns(){
+  try{
+    PATS = await api('/api/patterns');
+    var box=document.getElementById('pl'); box.innerHTML='';
+    PATS.forEach(function(p){
+      var row=document.createElement('div'); row.className='pr';
+      var n=document.createElement('div'); n.className='pn'; n.textContent=p.name;
+      n.title=[p.desc||'', p.suck_text?('吮吸端 '+p.suck_text):'', p.invib_text?('入体端 '+p.invib_text):'']
+              .filter(function(x){return x;}).join('\n');
+      row.appendChild(n);
+      [['吮吸端','suck'],['入体端','invib'],['两端','both']].forEach(function(t){
+        var b=document.createElement('button'); b.textContent=t[0];
+        b.dataset.p = p.name; b.dataset.part = t[1];
+        b.onclick=function(){ runPattern(p.name, t[1]); };
+        row.appendChild(b);
+      });
+      box.appendChild(row);
+    });
+    lg('模式表 '+PATS.length+' 个');
+  }catch(e){ lg('[E] 取模式表失败 '+e.message); }
+}
+
+/* --- 状态刷新 --- */
+function hl(boxId, val){
+  var bs=document.getElementById(boxId).children;
+  for(var i=0;i<bs.length;i++){
+    if(bs[i].dataset && parseInt(bs[i].dataset.v,10)===val) bs[i].classList.add('on');
+    else bs[i].classList.remove('on');
+  }
+}
+function paint(){
+  document.getElementById('pd').className='dot '+(ST.phone_online?'green':'red');
+  document.getElementById('pst').textContent = ST.phone_online ? 'App 在线，指令能播出去' : 'App 没连上';
+  se('errPhone', !ST.phone_online);
+  ['suck','invib'].forEach(function(ch){
+    var lv = ST[ch].level|0, pt = ST[ch].pattern;
+    document.getElementById(ch+'Cur').textContent = lv + (pt? ' · '+pt : '');
+    var r=document.getElementById(ch+'Range');
+    if(document.activeElement!==r) r.value = lv;
+    hl(ch+'G', pt? -1 : lv);
+  });
+  var parts=[];
+  if(ST.suck.level||ST.suck.pattern) parts.push('吮吸 '+ST.suck.level+(ST.suck.pattern?'('+ST.suck.pattern+')':''));
+  if(ST.invib.level||ST.invib.pattern) parts.push('入体 '+ST.invib.level+(ST.invib.pattern?'('+ST.invib.pattern+')':''));
+  document.getElementById('lc').textContent = parts.length? parts.join(' · ') : '待机';
+  var bs=document.getElementById('pl').getElementsByTagName('button');
+  for(var i=0;i<bs.length;i++){
+    var pn=bs[i].dataset.p, pa=bs[i].dataset.part;
+    var on = (pa==='suck' && ST.suck.pattern===pn) || (pa==='invib' && ST.invib.pattern===pn)
+          || (pa==='both' && ST.suck.pattern===pn && ST.invib.pattern===pn);
+    if(on) bs[i].classList.add('on'); else bs[i].classList.remove('on');
+  }
+}
+async function refresh(){
+  try{ ST = await api('/api/state'); se('errNet', false); paint(); }
+  catch(e){ if((''+e.message).indexOf('401')<0) se('errNet', true); }
+}
+
+loadPatterns();
+refresh();
+setInterval(refresh, 2000);
+lg('就绪 · 口令'+(TK?'已加载':'缺失'));
+</script>
+</body>
+</html>

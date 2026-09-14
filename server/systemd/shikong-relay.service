@@ -1,0 +1,14 @@
+[Unit]
+Description=Shikong 4.0 Relay Server (phone broadcast control)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/shikong-bridge
+ExecStart=/usr/bin/python3 /opt/shikong-bridge/relay_server.py
+Restart=always
+RestartSec=3
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

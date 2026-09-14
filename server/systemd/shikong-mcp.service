@@ -1,0 +1,15 @@
+[Unit]
+Description=Shikong 4.0 MCP Server
+After=network.target shikong-relay.service
+Wants=shikong-relay.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/shikong-bridge
+ExecStart=/usr/bin/python3 /opt/shikong-bridge/mcp_server.py
+Restart=always
+RestartSec=3
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
