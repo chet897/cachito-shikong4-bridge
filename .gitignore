@@ -1,0 +1,18 @@
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+.externalNativeBuild/
+.cxx/
+__pycache__/
+*.pyc
+
+# 绝不入库：抓包日志含设备信息、口令、随机 APK 路径、构建产物
+captures/
+*.btsnoop
+*.log
+token
+apk/
+apk-path.txt
+*.apk
